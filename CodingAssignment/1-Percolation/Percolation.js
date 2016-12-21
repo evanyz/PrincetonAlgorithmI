@@ -21,6 +21,7 @@ function initiate(object, width, height){
 }
 
 function QUUnion(parent,weight,i,j){	// default is let i's parent be j
+	console.log('connect '+ i + ' and '+ j);
 	var iRoot=root(parent,i);
 	var jRoot=root(parent,j);
 	if(iRoot == jRoot) return; // same root
@@ -47,19 +48,35 @@ function QUFind(parent,weight,i,j){
 	else return false;
 }
 
+function shuffle(a) {
+    var j, x, i;
+    for (i = a.length; i; i--) {
+        j = Math.floor(Math.random() * i);
+        x = a[i - 1];
+        a[i - 1] = a[j];
+        a[j] = x;
+    }
+}
 
-function openRandBlock(connected, parent, weight, n, ctx , nwidth, borderWidth, sizeUnit, open) {
+function openRandBlock(connected, parent, weight, n, ctx , nwidth, borderWidth, sizeUnit, open, pseudoRandom) {
     setInterval(function () {
     	console.log('setTimeout called');
         if (connected === false) {
-        	var rand = Math.floor((Math.random() * n) + 1);
-
-        	//========= test code ========
+        	//var rand = Math.floor((Math.random() * n) + 1);
         	if (window.increCount === undefined) {
 			    window.increCount = 1;
 			}else{
 				window.increCount++;
 			}
+			rand = pseudoRandom[window.increCount];
+			console.log(`increCount = ${window.increCount}`)
+        	//========= test code ========
+			// var testarray=[6,9,12,17,22,23,24,25,28,29,31,50,51];
+			
+			// if(rand==31){c
+			// 	console.log('break point rand = 31');
+			// }
+			// if(window.increCount < testarray.length){rand=testarray[increCount];}
 			//rand = window.increCount;
 
 			// =========== test code
@@ -68,25 +85,27 @@ function openRandBlock(connected, parent, weight, n, ctx , nwidth, borderWidth, 
 			if(open[rand]===true)return;
 			open[rand] = true;
 			//up
-			if(rand-nwidth>0 && open[rand-nwidth])QUUnion(parent,weight,rand-nwidth,rand);
+			if(rand-nwidth>0 && open[rand-nwidth]){
+				QUUnion(parent,weight,rand-nwidth,rand);
+			}
 			//down
 			if(rand+nwidth<n && open[rand+nwidth])QUUnion(parent,weight,rand+nwidth,rand);
 			// left side case
-			if(rand%nwidth==1 && open[rand+1]){
+			if(rand%nwidth==1){
 				//right
-				QUUnion(parent,weight,rand+1,rand);
+				if(open[rand+1]==true)QUUnion(parent,weight,rand+1,rand);
 			}
 			// right side case
-			else if(rand%nwidth==0 && open[rand-1]){
+			else if(rand%nwidth==0){
 				//left
-				QUUnion(parent,weight,rand-1,rand);
+				if(open[rand-1]==true)QUUnion(parent,weight,rand-1,rand);
 			}
 			// middle side case
 			else{
 				//right
-				QUUnion(parent,weight,rand+1,rand);
+				if(open[rand+1]==true)QUUnion(parent,weight,rand+1,rand);
 				//left
-				QUUnion(parent,weight,rand-1,rand);
+				if(open[rand-1]==true)QUUnion(parent,weight,rand-1,rand);
 			}
 			// draw this block
 			if(QUFind(parent,weight,0,rand)===true){
@@ -98,14 +117,26 @@ function openRandBlock(connected, parent, weight, n, ctx , nwidth, borderWidth, 
 
 			// redraw all blocks into blue if root is 0
 			for(var index=1;index<n;index++){
-				if( root(parent, index)==0){
-					drawBlock(ctx,(index-1)%nwidth*(borderWidth*2+sizeUnit)+borderWidth,Math.floor((index-1)/nwidth)*(borderWidth*2+sizeUnit)+borderWidth,sizeUnit,"blue");}
+				if( root(parent, index)==0 && open[index]===true){
+					drawBlock(ctx,(index-1)%nwidth*(borderWidth*2+sizeUnit)+borderWidth,Math.floor((index-1)/nwidth)*(borderWidth*2+sizeUnit)+borderWidth,sizeUnit,"blue");
 				}
 			}
-			if(QUFind(parent,weight,0,n+1)===true){connected = true;}
+
+			// draw connectivity
+			for(var index=1;index<n;index++){
+				if(QUFind(parent,weight,0,index)===true && open[index]===true){
+					drawBlock(ctx,(index-1)%nwidth*(borderWidth*2+sizeUnit)+borderWidth,Math.floor((index-1)/nwidth)*(borderWidth*2+sizeUnit)+borderWidth,sizeUnit,"blue");
+				}
+			}
+
+
+
+			if(QUFind(parent,weight,0,n+1)){
+				connected = true;
+			}
 			return connected;
         }
-    }, 200);
+    }, 20);
 }
 
 function main(){
@@ -145,11 +176,18 @@ function main(){
 			QUUnion(parent,weight,n-i,n+1);
 		}
 
+		// generate pseudo random array
+		var pseudoRandom =[];
+		console.log('random array size: '+n);
+		for (var i = 1; i <= n; i++) {
+		   pseudoRandom.push(i);
+		}
+		shuffle(pseudoRandom);
 		//  randomly open some block
 		var maxN = n;
 		var connected = false;
 		while(maxN-- && connected===false){
-			connected = openRandBlock(connected, parent, weight, n, ctx, nwidth, borderWidth,sizeUnit, open);
+			connected = openRandBlock(connected, parent, weight, n, ctx, nwidth, borderWidth,sizeUnit, open, pseudoRandom);
 		}
 	}
 
