@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Elementary Sorts</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css">
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+			<canvas id="myChart" width="600" height="600"></canvas>
+		</div>
+	</div>
+	<script type="text/javascript">
+		function shuffle(a) {
+		    var j, x, i;
+		    for (i = a.length; i; i--) {
+		        j = Math.floor(Math.random() * i);
+		        x = a[i - 1];
+		        a[i - 1] = a[j];
+		        a[j] = x;
+		    }
+		}
+		function drawChart(chartID,chartLabel,chartLabels,chartData,animationDuration){
+			// Any of the following formats may be used
+			var ctx = document.getElementById(chartID);
+				// var ctx = document.getElementById("myChart").getContext("2d");
+				// var ctx = $("#myChart");
+				// var ctx = "myChart";
+			var myChart = new Chart(ctx, {
+		    type: 'bar',
+		    data: {
+		        labels: chartLabels,
+		        datasets: [{
+		            label: chartLabel,
+		            data: chartData,
+		            backgroundColor:'rgba(0,0,0,1)',
+		            borderWidth: 0
+			        }]
+			    },
+			    options: {
+			    	responsive: false,
+			        scales: {
+			            yAxes: [{
+			                ticks: {
+			                    beginAtZero:true
+			                }
+			            }]
+			        },
+			        animation: {
+			        	duration: animationDuration
+			        }
+			    }
+			});
+			return myChart;
+		}
+		function updateChart(chartObj, chartLabels,chartData){
+			//console.log('update chart called');
+			chartObj.data.labels = chartLabels;
+			chartObj.data.datasets.data = chartData;
+			chartObj.update();
+			
+		}
+		function exchange(a,i,j){
+				//console.log('exchange called');
+				var n = a.length;
+				if(i >= 0 && i < n && j >= 0 && j < n ){
+					var temp = a[i];
+					a[i]= a[j];
+					a[j]= temp;
+				}
+		}
+		// update chart
+		function selectionSort(chartObj, a, interval){
+			var i = 0;
+			var N = a.length;
+			var setIntervalSelectionSort = setInterval(function(){ 
+				console.log(i);
+				var minIndex = i;
+				var min = a[i];
+				for(var j = i+1; j<a.length ; j++){
+					if(a[j]<min){
+						min = a[j];
+						minIndex = j;
+					}
+				}
+				if(minIndex!==i){
+					    exchange(a,minIndex,i);
+						updateChart(chartObj, a,a)
+				}
+				i++; 
+				if(i>=N)clearInterval(setIntervalSelectionSort);
+			}, interval);
+		}
+
+
+		function insertionSort(chartObj, a, interval){
+			var i = 1;
+			var j = 1;
+			var N = a.length;
+			var setIntervalInsertionSort = setInterval(function(){ 
+				if(j>0 && a[j]<a[j-1]){
+					exchange(a,j-1,j);
+					updateChart(chartObj, a,a);
+					j--
+				}else{
+					i++;
+					j=i;
+				}
+				if(i>=N)clearInterval(setIntervalInsertionSort);
+			}, interval);
+		}
+
+		function shellSort(chartObj, a, interval){
+			var N = a.length;
+			var h = 1;
+			while(h<N/3)h=h*3+1;
+			var i = h;
+			var j = i;
+			console.log(`h = ${h}`);
+			var setIntervalShellSort = setInterval(function(){
+				if(j-h>=0 && a[j]<a[j-h]){
+					exchange(a,j,j-h);
+					updateChart(chartObj, a,a);
+					j=j-h;
+				}else{
+					i++;
+					j=i;
+				}
+				if(i>=N){
+					h=(h-1)/3;
+					i=h;
+					j=i;
+					console.log(`h = ${h}`);
+				}
+				if(h<1)clearInterval(setIntervalShellSort);
+			}, interval);
+		}
+
+		function randomShuffle(chartObj, a, interval){
+			var N = a.length;
+			var i = 0;
+			var setIntervalRandomShuffle = setInterval(function(){
+				var r = Math.floor(Math.random()*(i+1)); // 0~i
+				exchange(a,i,r);
+				updateChart(chartObj, a,a);
+				i++;
+				if(i>=N)clearInterval(setIntervalRandomShuffle);
+			}, interval);
+		}
+
+
+
+		// initialization
+		var charID = "myChart";
+		//var chartLabel = "Selection Sort"; 
+		//var chartLabel = "Insertion Sort";
+		var chartLabel = "Shell Sort";
+		var arrayLength = 50;
+		var animationDuration = 150;  //ms
+		var interval = 200; //ms
+
+		// generate random arrays
+		var unsortedArray=[];
+		for(var i = 1; i<=arrayLength ; i++){
+			unsortedArray.push(i);
+		}
+		shuffle(unsortedArray);
+
+		// initialize the chart
+		var myChart = drawChart(charID, chartLabel, unsortedArray, unsortedArray, animationDuration);
+
+		// sort the array and update the chart
+		//selectionSort(myChart, unsortedArray, interval);
+		//insertionSort(myChart, unsortedArray, interval);
+		//shellSort(myChart, unsortedArray, interval);
+		//randomShuffle(myChart, unsortedArray, interval);
+
+
+	</script>
+</body>
+</html>
