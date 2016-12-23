@@ -61,9 +61,10 @@
 		}
 
 
-		function convexHull(points){
+		function convexHull(points, context){
 			var startPoint = points[0];
 			var angles = [];
+			var index = [];
 			// find the largest y point
 			for(var i=0; i<points.length; i++){
 				if(points[i].y > startPoint.y)startPoint = points[i];
@@ -71,8 +72,9 @@
 
 			// calculate angles
 			for(var i=0; i<points.length; i++){
-				var angle = Math.atan2(points[i].y - startPoint.y，points[i].x - startPoint.x)；
+				var angle = Math.atan2(points[i].y - startPoint.y, points[i].x - startPoint.x);
 				angles.push(angle);
+				index.push(i);
 			}
 			// sort points according to angles.   well.. I just use the simplest selection sort
 			if(angles.length !== points.length){
@@ -80,17 +82,29 @@
 				return;
 			}
 			for(var i=0; i<angles.length; i++){
-				var iMin=angles[i];
+				var min=i;
 				for(var j=i+1; j<points.length; j++){
-					if(angles.[j]<iMin){
-						
+					if(angles[index[j]]>angles[index[min]]){
+						min = j;
 					}
+				}
+				if(min!=i){
+					var temp = index[min];
+					index[min] = index[i];
+					index[i] = temp;
 				}
 			}
 
+			// draw sorted points with numbers
+			context.font = "13px Arial";
+			for(var i=0; i<points.length; i++){
+				context.fillText(i,points[index[i]].x+5,points[index[i]].y-5);
+			}
+
 			// loop sorted points by conterclockwise, if angle is clockwise then drop it
-
-
+			for(var i=2; i<points.length; i++){
+				
+			}
 		}
 		// initialization
 		var canvas = document.getElementById('convex-hull');
@@ -110,6 +124,9 @@
 
      	//draw all points
      	drawAllPoints(context, points, radius, pointColor);
+
+     	// find convex hull
+     	convexHull(points, context);
 
 
 
