@@ -2,20 +2,118 @@
 <html>
 <head>
 	<title>Convex Hull</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css">
+	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css">
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
 	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="https://d3js.org/d3.v4.min.js"></script> -->
+	<style>
+		.chart div {
+			font: 10px sans-serif;
+			background-color: steelblue;
+			text-align: right;
+			padding: 3px;
+			margin: 1px;
+			color: white;
+		}
+	</style>
 </head>
 <body>
 	<div class="container">
 		<div class="row">
-			<canvas id="myChart" width="600" height="600"></canvas>
+			<canvas id="convex-hull" width="600" height="600"></canvas>
 		</div>
+	
 	</div>
 	<script type="text/javascript">
+		function drawPoint(context,x,y,r,color){
+			context.beginPath();
+			context.arc(x, y, r, 0, 2 * Math.PI, false);
+			context.fillStyle = color;
+			context.fill();
+			context.lineWidth = 0;
+			context.stroke();
+		}
 
+		function drawBoundary(context,width,height,color){
+			context.beginPath();
+			context.moveTo(0,0);
+			context.lineTo(width,0);
+			context.lineTo(width,height);
+			context.lineTo(0,height);
+			context.lineTo(0,0);
+			context.stroke();
+		}
+
+		function randomPoints(points, N, size, padding){
+			for(var i=0; i<N; i++){
+	     		points.push({
+	     			x:Math.floor((Math.random() * (size-2*padding)) + 1 + padding),
+	     			y:Math.floor((Math.random() * (size-2*padding)) + 1 + padding)
+	     		})
+	     	}
+		}
+
+		function drawAllPoints(context, points, radius, pointColor){
+			for(var i=0; i<points.length; i++){
+	     		drawPoint(context,points[i].x,points[i].y,radius,pointColor);
+	     	}
+		}
+
+
+		function convexHull(points){
+			var startPoint = points[0];
+			var angles = [];
+			// find the largest y point
+			for(var i=0; i<points.length; i++){
+				if(points[i].y > startPoint.y)startPoint = points[i];
+			}
+
+			// calculate angles
+			for(var i=0; i<points.length; i++){
+				var angle = Math.atan2(points[i].y - startPoint.y，points[i].x - startPoint.x)；
+				angles.push(angle);
+			}
+			// sort points according to angles.   well.. I just use the simplest selection sort
+			if(angles.length !== points.length){
+				console.log('angles length is not same as points length');
+				return;
+			}
+			for(var i=0; i<angles.length; i++){
+				var iMin=angles[i];
+				for(var j=i+1; j<points.length; j++){
+					if(angles.[j]<iMin){
+						
+					}
+				}
+			}
+
+			// loop sorted points by conterclockwise, if angle is clockwise then drop it
+
+
+		}
+		// initialization
+		var canvas = document.getElementById('convex-hull');
+     	var context = canvas.getContext('2d');
+     	var radius = 5;
+     	var pointColor = 'black';
+     	var N = 15;
+     	var points =[];
+     	var size = 600;
+     	var padding = 20;
+
+     	// draw boundary
+     	drawBoundary(context, size, size, 'black');
+
+     	// generate random points
+     	randomPoints(points, N, size, padding);
+
+     	//draw all points
+     	drawAllPoints(context, points, radius, pointColor);
+
+
+
+		
 	</script>
 </body>
 </html>
