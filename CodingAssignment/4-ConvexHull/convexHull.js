@@ -141,10 +141,10 @@
      	var radius = 5;
      	var pointColor = 'black';
      	var hullColor = 'red';
-     	var N = 15;
+     	var N = 100;
      	var points =[];
-     	var size = 600;
-     	var padding = 50;
+     	var size = 800;
+     	var padding = 100;
 
      	// draw boundary
      	drawBoundary(context, size, size, 'black');
