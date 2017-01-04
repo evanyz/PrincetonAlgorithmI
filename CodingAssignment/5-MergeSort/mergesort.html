@@ -63,9 +63,26 @@
 			chartObj.update();
 			
 		}
-
+		function isSorted(a,increase,lo,hi){	 //increase should be true or false
+			for(var i=lo; i<hi-1; i++){
+				if(a[i]<a[i+1]!==increase)return false;
+			}
+			return true;
+		}
+		function mergeSortMerge(a, aux, lo, mid, hi){
+			var increase = true;
+			var increaseStr = increase==true?'increase':'decrease';
+			if(!isSorted(a,increase,lo,mid)){
+				console.log(`a[${lo}] to a[${mid}] do not ${increaseStr}`);
+				return false;
+			}
+			if(!isSorted(a,increase,lo,mid)){
+				console.log(`a[${lo}] to a[${mid}] do not ${increaseStr}`);
+				return false;
+			}
+		}
 		function mergeSort(chartObj, a, interval){
-
+			
 		}
 
 
@@ -88,7 +105,7 @@
 		var charID = "myChart";
 		//var chartLabel = "Selection Sort"; 
 		//var chartLabel = "Insertion Sort";
-		var chartLabel = "Shell Sort";
+		var chartLabel = "Merge Sort";
 		var arrayLength = 50;
 		var animationDuration = 150;  //ms
 		var interval = 200; //ms
