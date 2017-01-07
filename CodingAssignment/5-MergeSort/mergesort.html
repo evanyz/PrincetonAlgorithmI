@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.bundle.min.js"></script>
 	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/cosmo/bootstrap.min.css">
+	<script type="text/javascript" src="mergesort.js"></script>
 </head>
 <body>
 	<div class="container">
@@ -63,27 +64,7 @@
 			chartObj.update();
 			
 		}
-		function isSorted(a,increase,lo,hi){	 //increase should be true or false
-			for(var i=lo; i<hi-1; i++){
-				if(a[i]<a[i+1]!==increase)return false;
-			}
-			return true;
-		}
-		function mergeSortMerge(a, aux, lo, mid, hi){
-			var increase = true;
-			var increaseStr = increase==true?'increase':'decrease';
-			if(!isSorted(a,increase,lo,mid)){
-				console.log(`a[${lo}] to a[${mid}] do not ${increaseStr}`);
-				return false;
-			}
-			if(!isSorted(a,increase,lo,mid)){
-				console.log(`a[${lo}] to a[${mid}] do not ${increaseStr}`);
-				return false;
-			}
-		}
-		function mergeSort(chartObj, a, interval){
-			
-		}
+		
 
 
 
@@ -121,7 +102,12 @@
 		var myChart = drawChart(charID, chartLabel, unsortedArray, unsortedArray, animationDuration);
 
 		// sort the array and update the chart
-
+		var aux = [];
+		for(var i = 0;i<unsortedArray.length;i++){
+			aux.push(0);
+		}
+		mergeSort(unsortedArray, aux, 0, unsortedArray.length-1);
+		updateChart(myChart, unsortedArray,unsortedArray);
 	</script>
 </body>
 </html>
